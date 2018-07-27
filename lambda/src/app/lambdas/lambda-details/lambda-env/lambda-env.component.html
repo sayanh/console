@@ -20,7 +20,7 @@
             <input [(ngModel)]="envVar.value" class="tn-form__control" type="text" id="input-2" placeholder="Value" (keyup.enter)="addVariable()">
         </div>
         <div class="col-2 lambda-align-right">
-            <button class="tn-button tn-button--small tn-button--text" (click)="addVariable()" [disabled]="disableAddVar">
+            <button class="tn-button tn-button--small tn-button--text" (click)="addVariable()" [disabled]="disableAddVar || !lambdaName || isLambdaNameInvalid">
                 + Add Variable
             </button>
         </div>

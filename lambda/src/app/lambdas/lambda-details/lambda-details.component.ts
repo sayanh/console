@@ -180,6 +180,9 @@ export class LambdaDetailsComponent implements AfterViewInit {
             this.lambda = this.lambdaDetailsService.initializeLambda();
             this.lambda.spec.function = this.code;
             this.loaded = Observable.of(true);
+            if (!this.lambda.metadata.name || this.isFunctionNameInvalid) {
+              this.editor.setReadOnly(true);
+            }
           }
 
           this.eventActivationsService
@@ -848,6 +851,9 @@ export class LambdaDetailsComponent implements AfterViewInit {
       this.lambda.metadata.name === ''
         ? false
         : true;
+    !this.lambda.metadata.name || this.isFunctionNameInvalid
+      ? this.editor.setReadOnly(true)
+      : this.editor.setReadOnly(false);
   }
 
   onMouseOver(trigger: ITrigger): void {
