@@ -817,7 +817,7 @@ export class LambdaDetailsComponent implements AfterViewInit {
       this.newLabel = '';
       this.wrongLabel = false;
       this.isLambdaFormValid = true;
-    } else {
+    } else if (this.newLabel) {
       this.wrongLabel = this.newLabel;
       this.isLambdaFormValid = false;
     }
@@ -856,9 +856,11 @@ export class LambdaDetailsComponent implements AfterViewInit {
         : true;
     if (!this.lambda.metadata.name || this.isFunctionNameInvalid) {
       this.editor.setReadOnly(true);
+      this.dependencyEditor.setReadOnly(true);
       this.isLambdaFormValid = false;
     } else {
       this.editor.setReadOnly(false);
+      this.dependencyEditor.setReadOnly(false);
       this.isLambdaFormValid = true;
     }
   }
