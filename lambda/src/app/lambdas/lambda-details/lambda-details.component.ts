@@ -86,6 +86,7 @@ export class LambdaDetailsComponent implements AfterViewInit {
   toggleTriggerType = false;
   typeDropdownHidden = true;
   toggleHTTPTriggerMenu = false;
+  isLambdaFormValid = true;
   showHTTPURL: HTTPEndpoint = null;
   httpURL = '';
   labels = [];
@@ -815,8 +816,10 @@ export class LambdaDetailsComponent implements AfterViewInit {
       this.labels.push(this.newLabel);
       this.newLabel = '';
       this.wrongLabel = false;
+      this.isLambdaFormValid = true;
     } else {
       this.wrongLabel = this.newLabel;
+      this.isLambdaFormValid = false;
     }
   }
 
@@ -854,6 +857,10 @@ export class LambdaDetailsComponent implements AfterViewInit {
     !this.lambda.metadata.name || this.isFunctionNameInvalid
       ? this.editor.setReadOnly(true)
       : this.editor.setReadOnly(false);
+
+    this.isFunctionNameInvalid
+      ? (this.isLambdaFormValid = false)
+      : (this.isLambdaFormValid = true);
   }
 
   onMouseOver(trigger: ITrigger): void {
