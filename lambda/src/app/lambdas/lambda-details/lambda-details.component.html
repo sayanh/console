@@ -3,7 +3,7 @@
   <div class="sf-toolbar__right">
     <div class="sf-toolbar__item">
       <button class="tn-button tn-button--small tn-button--text cancel" (click)="cancel()">Cancel</button>
-      <button class="tn-button tn-button--small sf-button--primary" (click)="deployLambda()" [disabled]="!lambda.metadata.name || isFunctionNameInvalid || !isLambdaFormValid">{{ mode == 'create'?'Create':'Save' }}</button>
+      <button class="tn-button tn-button--small sf-button--primary" (click)="deployLambda()" [disabled]="!lambda.metadata.name || !isLambdaFormValid">{{ mode == 'create'?'Create':'Save' }}</button>
     </div>
   </div>
 </div>
@@ -87,7 +87,7 @@
                     <div class="trigger-body">
                       <label class="fd-form__label" for="Yj07w605">
                         <span class="fd-toggle fd-toggle--small fd-form__control">
-                          <input type="checkbox" id="Yj07w605" [(ngModel)]="isHTTPTriggerAuthenticated" checked>
+                          <input type="checkbox" id="Yj07w605" [(ngModel)]="isHTTPTriggerAuthenticated"  [attr.disabled]="!lambda.metadata.name || isFunctionNameInvalid ? '':null" checked>
                           <span class="fd-toggle__switch" role="presentation"></span>
                         </span>
                         Enable Authentication
@@ -97,7 +97,7 @@
                       <button class="tn-button tn-button--small tn-button--small-secondary tn-button--text" (click)=hideHTTPTriggerMenu()>
                         Cancel
                       </button>
-                      <button class="tn-button tn-button--small tn-button--text" (click)=addHTTPTrigger()>
+                      <button class="tn-button tn-button--small tn-button--text" [disabled]="!lambda.metadata.name || isFunctionNameInvalid" (click)=addHTTPTrigger()>
                         Add
                       </button>
                     </div>
