@@ -109,10 +109,14 @@ export class LambdaDetailsComponent implements AfterViewInit {
   isEnvVariableNameInvalid = false;
   isFunctionNameInvalid = false;
   isHTTPTriggerAdded = false;
-  isHTTPTriggerAuthenticated = false;
+  isHTTPTriggerAuthenticated = true;
   existingHTTPEndpoint: Api;
   bindingState: Map<string, InstanceBindingState>;
   sessionId: string;
+
+  public issuer: string;
+  public jwksUri: string;
+  public authType: string;
 
   @ViewChild('dependencyEditor') dependencyEditor;
   @ViewChild('editor') editor;
@@ -767,6 +771,7 @@ export class LambdaDetailsComponent implements AfterViewInit {
   }
 
   showHTTPTrigger(): void {
+    this.isHTTPTriggerAuthenticated = true;
     this.toggleTriggerType = false;
     this.httpTriggerModal.show(
       this.lambda,
@@ -930,6 +935,9 @@ export class LambdaDetailsComponent implements AfterViewInit {
       this.existingHTTPEndpoint,
       this.isHTTPTriggerAuthenticated,
       this.httpURL,
+      this.authType,
+      this.jwksUri,
+      this.issuer,
     );
     this.apisService.createApi(api, this.environment, this.token).subscribe(
       () => {
@@ -964,6 +972,9 @@ export class LambdaDetailsComponent implements AfterViewInit {
       this.existingHTTPEndpoint,
       this.isHTTPTriggerAuthenticated,
       this.httpURL,
+      this.authType,
+      this.jwksUri,
+      this.issuer,
     );
     this.apisService.updateApi(api, this.environment, this.token).subscribe(
       () => {
@@ -1028,11 +1039,23 @@ export class LambdaDetailsComponent implements AfterViewInit {
   }
 
   handleHttpEmitter($event): void {
-    this.httpURL = `${this.lambda.metadata.name}-${this.environment}.${
-      AppConfig.domain
-    }`.toLowerCase();
     this.selectedTriggers = $event;
-    this.isHTTPTriggerAdded = true;
-    this.isHTTPTriggerAuthenticated = $event[0].isAuthEnabled;
+
+    this.selectedTriggers.forEach(trigger => {
+      if (trigger.eventType === 'http') {
+        this.httpURL = `${this.lambda.metadata.name}-${this.environment}.${
+          AppConfig.domain
+        }`.toLowerCase();
+
+        this.isHTTPTriggerAdded = true;
+        this.isHTTPTriggerAuthenticated = (trigger as HTTPEndpoint).isAuthEnabled;
+
+        if ((trigger as HTTPEndpoint).isAuthEnabled) {
+          this.authType = (trigger as HTTPEndpoint).authentication.type;
+          this.jwksUri = (trigger as HTTPEndpoint).authentication.jwt.jwksUri;
+          this.issuer = (trigger as HTTPEndpoint).authentication.jwt.issuer;
+        }
+      }
+    });
   }
 }
