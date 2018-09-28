@@ -27,7 +27,6 @@ export class HttpTriggerComponent {
   private title: string;
   public isActive = false;
   private httpURL = '';
-  private isHTTPTriggerAuthenticated = true;
 
   public apiName = '';
   public serviceName = '';
@@ -53,17 +52,10 @@ export class HttpTriggerComponent {
     private httpClient: HttpClient,
   ) {}
 
-  public show(
-    lambda,
-    environment,
-    isHTTPTriggerAuthenticated,
-    selectedHTTPTriggers,
-  ) {
+  public show(lambda, environment, selectedHTTPTriggers) {
     this.lambda = lambda;
     this.environment = environment;
-    this.isHTTPTriggerAuthenticated =
-      isHTTPTriggerAuthenticated === false ? isHTTPTriggerAuthenticated : true;
-    this.secure = this.isHTTPTriggerAuthenticated;
+    this.secure = true;
     this.selectedHTTPTriggers = selectedHTTPTriggers;
     this.httpURL = `https://${this.lambda.metadata.name}-${this.environment}.${
       AppConfig.domain
@@ -83,7 +75,7 @@ export class HttpTriggerComponent {
   }
 
   addTrigger() {
-    if (this.isHTTPTriggerAuthenticated && !this.isAbleToMakeRequest()) {
+    if (this.secure && !this.isAbleToMakeRequest()) {
       this.validateDetails();
     }
 
@@ -143,7 +135,8 @@ export class HttpTriggerComponent {
       this.defaultAuthConfig = config;
       let hasDex = false;
       const isLocal = AppConfig.domain === 'kyma.local' ? true : false;
-      const localJwksUri = 'http://dex-service.kyma-system.svc.cluster.local:5556/keys';
+      const localJwksUri =
+        'http://dex-service.kyma-system.svc.cluster.local:5556/keys';
       const localIssuer = `https://dex.${AppConfig.domain}`;
       let jwksUri = config.jwks_uri;
       let issuer = config.issuer;
@@ -156,14 +149,14 @@ export class HttpTriggerComponent {
             }
             if (isLocal) {
               this.jwksUri = localJwksUri;
-              this.issuer = localIssuer;                
+              this.issuer = localIssuer;
               this.availablePresets.push({
                 label: 'Local',
                 jwksUri: localJwksUri,
                 issuer: localIssuer,
               });
             }
-            if (!hasDex) {           
+            if (!hasDex) {
               this.availablePresets.push({
                 label: 'Dex',
                 jwksUri: config.jwks_uri,
@@ -202,11 +195,6 @@ export class HttpTriggerComponent {
       {},
     );
   };
-
-  toggleSecure() {
-    this.secure = !this.secure;
-    this.isHTTPTriggerAuthenticated = this.secure;
-  }
 
   public isDefaultProvider() {
     return (

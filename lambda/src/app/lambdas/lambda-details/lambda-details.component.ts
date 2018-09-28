@@ -773,12 +773,9 @@ export class LambdaDetailsComponent implements AfterViewInit {
   showHTTPTrigger(): void {
     this.isHTTPTriggerAuthenticated = true;
     this.toggleTriggerType = false;
-    this.httpTriggerModal.show(
-      this.lambda,
-      this.environment,
-      this.isHTTPTriggerAuthenticated,
-      [...this.selectedTriggers],
-    );
+    this.httpTriggerModal.show(this.lambda, this.environment, [
+      ...this.selectedTriggers,
+    ]);
   }
 
   unselectEvent(event: ITrigger) {
